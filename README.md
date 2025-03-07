@@ -4,7 +4,7 @@ Migration AzDo vars to VCS context
 > Age is a simple, modern and secure file encryption tool, format, and Go library. It features small explicit keys, no config options, and UNIX-style composability.
 
 
-**Age Encryption Utility**
+# **Age Encryption Utility**
 
 A simple script to encrypt and decrypt sensitive files using the **age** tool. This ensures secure handling of secrets, especially in CI/CD pipelines.
 
