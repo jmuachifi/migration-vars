@@ -1,0 +1,36 @@
+# Ignore the Age key file (critical for security)
+key.age
+public.key
+
+# Ignore encrypted and decrypted files (optional, based on your use case)
+nsp-sensitive-vars.yml
+#nsp-sensitive-vars.yml.age
+
+# Ignore SSH keys (DO NOT commit private keys)
+id_ed25519
+id_ed25519.pub
+
+# Ignore backup or temporary files
+*.bak
+*.tmp
+*.swp
+*.swo
+
+# Ignore logs
+*.log
+logs/
+debug.log
+
+# Ignore system-generated files (MacOS, Windows, Linux)
+.DS_Store
+Thumbs.db
+*.~lock.*
+
+# Ignore VS Code settings (if using VS Code)
+.vscode/
+
+# Ignore dependency or build artifacts (if applicable)
+node_modules/
+dist/
+build/
+.env
