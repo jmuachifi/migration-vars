@@ -48,6 +48,10 @@ Encrypts `nsp-sensitive-vars.yml` into `nsp-sensitive-vars.yml.age`.
 ```bash
 ./encrypt-decrypt.sh encrypt
 ```
+or different file for output <br>
+```
+./encrypt-decrypt.sh encrypt nsp-sensitive-vars.yml secrets.yml.age
+```
 🔹 **Outputs:**  
 - `nsp-sensitive-vars.yml.age` (Encrypted file)
 
@@ -58,6 +62,10 @@ Decrypts `nsp-sensitive-vars.yml.age` back to its original form.
 
 ```bash
 ./encrypt-decrypt.sh decrypt
+```
+or use different file for output<br>
+```
+./encrypt-decrypt.sh decrypt nsp-sensitive-vars.yml.age my-secrets.yml
 ```
 🔹 **Restores:**  
 - `nsp-sensitive-vars.yml` (Original file)
