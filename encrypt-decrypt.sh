@@ -1,10 +1,8 @@
 #!/bin/bash
 
-# Default filenames (Can be overridden by environment variables or command-line arguments)
+# Default filenames (Can be overridden by environment variables)
 KEY_FILE="${KEY_FILE:-key.age}"
 PUBLIC_KEY_FILE="${PUBLIC_KEY_FILE:-public.key}"
-INPUT_FILE="${1:-nsp-sensitive-vars.yml}"
-ENCRYPTED_FILE="${2:-${INPUT_FILE}.age}"
 
 # Check if age is installed
 check_dependencies() {
@@ -33,30 +31,36 @@ generate_key() {
     echo "✅ Public key saved to: $PUBLIC_KEY_FILE"
 }
 
-# Function to encrypt file
+# Function to encrypt a file
 encrypt_file() {
     check_dependencies
+
+    INPUT_FILE="${1:-nsp-sensitive-vars.yml}"
+    ENCRYPTED_FILE="${2:-${INPUT_FILE}.age}"
 
     if [ ! -f "$PUBLIC_KEY_FILE" ]; then
         echo "Error: Public key file ($PUBLIC_KEY_FILE) not found! Generate it first."
         exit 1
     fi
 
-    PUBLIC_KEY=$(cat "$PUBLIC_KEY_FILE")
-
     if [ ! -f "$INPUT_FILE" ]; then
         echo "Error: Input file ($INPUT_FILE) not found!"
         exit 1
     fi
+
+    PUBLIC_KEY=$(cat "$PUBLIC_KEY_FILE")
 
     echo "🔒 Encrypting file: $INPUT_FILE..."
     age -r "$PUBLIC_KEY" -o "$ENCRYPTED_FILE" "$INPUT_FILE"
     echo "✅ Encryption complete: $ENCRYPTED_FILE"
 }
 
-# Function to decrypt file
+# Function to decrypt a file
 decrypt_file() {
     check_dependencies
+
+    ENCRYPTED_FILE="${1:-nsp-sensitive-vars.yml.age}"
+    OUTPUT_FILE="${2:-nsp-sensitive-vars.yml}"
 
     if [ ! -f "$KEY_FILE" ]; then
         echo "Error: Key file ($KEY_FILE) not found!"
@@ -69,13 +73,16 @@ decrypt_file() {
     fi
 
     echo "🔓 Decrypting file: $ENCRYPTED_FILE..."
-    age -d -i "$KEY_FILE" -o "$INPUT_FILE" "$ENCRYPTED_FILE"
-    echo "✅ Decryption complete: $INPUT_FILE"
+    age -d -i "$KEY_FILE" -o "$OUTPUT_FILE" "$ENCRYPTED_FILE"
+    echo "✅ Decryption complete: $OUTPUT_FILE"
 }
 
-# Function to encrypt with SSH key
+# Function to encrypt using an SSH key
 encrypt_with_ssh() {
     check_dependencies
+
+    INPUT_FILE="${1:-nsp-sensitive-vars.yml}"
+    ENCRYPTED_FILE="${2:-${INPUT_FILE}.age}"
     SSH_PUBLIC_KEY="$HOME/.ssh/id_ed25519.pub"
 
     if [ ! -f "$SSH_PUBLIC_KEY" ]; then
@@ -93,9 +100,12 @@ encrypt_with_ssh() {
     echo "✅ Encryption complete: $ENCRYPTED_FILE"
 }
 
-# Function to decrypt with SSH key
+# Function to decrypt using an SSH key
 decrypt_with_ssh() {
     check_dependencies
+
+    ENCRYPTED_FILE="${1:-nsp-sensitive-vars.yml.age}"
+    OUTPUT_FILE="${2:-nsp-sensitive-vars.yml}"
     SSH_PRIVATE_KEY="$HOME/.ssh/id_ed25519"
 
     if [ ! -f "$SSH_PRIVATE_KEY" ]; then
@@ -109,20 +119,20 @@ decrypt_with_ssh() {
     fi
 
     echo "🔓 Decrypting file using SSH private key..."
-    age -d -i "$SSH_PRIVATE_KEY" -o "$INPUT_FILE" "$ENCRYPTED_FILE"
-    echo "✅ Decryption complete: $INPUT_FILE"
+    age -d -i "$SSH_PRIVATE_KEY" -o "$OUTPUT_FILE" "$ENCRYPTED_FILE"
+    echo "✅ Decryption complete: $OUTPUT_FILE"
 }
 
 # Help message
 show_help() {
     echo "Usage: $0 [option] [input_file] [output_file]"
     echo "Options:"
-    echo "  generate-key              Generate a new age key"
-    echo "  encrypt [input] [output]  Encrypt file (default: nsp-sensitive-vars.yml)"
-    echo "  decrypt [input] [output]  Decrypt file (default: nsp-sensitive-vars.yml.age)"
+    echo "  generate-key               Generate a new age key"
+    echo "  encrypt [input] [output]   Encrypt file (default: nsp-sensitive-vars.yml)"
+    echo "  decrypt [input] [output]   Decrypt file (default: nsp-sensitive-vars.yml.age)"
     echo "  encrypt-ssh [input] [output]  Encrypt using SSH public key"
     echo "  decrypt-ssh [input] [output]  Decrypt using SSH private key"
-    echo "  help                      Show this help message"
+    echo "  help                       Show this help message"
 }
 
 # Main script logic
